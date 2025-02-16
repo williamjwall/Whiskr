@@ -9,7 +9,7 @@ app.use(express.json());
 
 // Basic route
 app.get("/", (req, res) => {
-    res.send("Whiskr API is running! 🚀");
+    res.send("Whiskr API is running!");
 });
 
 // Import routes
