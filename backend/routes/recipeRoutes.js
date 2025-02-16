@@ -1,10 +1,10 @@
-// backend/routes/recipeRoutes.js
+// routes/recipeRoutes.js
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
 // GET /api/recipes?search=...
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   const { search } = req.query;
   try {
     let query = 'SELECT * FROM recipes';
@@ -16,13 +16,13 @@ router.get('/', async (req, res) => {
     const result = await db.query(query, params);
     res.json(result.rows);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Error fetching recipes:', err);
+    next(err);
   }
 });
 
 // GET /api/recipes/:id
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
     const result = await db.query('SELECT * FROM recipes WHERE id = $1', [id]);
@@ -31,13 +31,13 @@ router.get('/:id', async (req, res) => {
     }
     res.json(result.rows[0]);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Error fetching recipe:', err);
+    next(err);
   }
 });
 
 // POST /api/recipes
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
   const { title, content, user_id } = req.body;
   try {
     const result = await db.query(
@@ -46,13 +46,13 @@ router.post('/', async (req, res) => {
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Error creating recipe:', err);
+    next(err);
   }
 });
 
 // PUT /api/recipes/:id
-router.put('/:id', async (req, res) => {
+router.put('/:id', async (req, res, next) => {
   const { id } = req.params;
   const { title, content } = req.body;
   try {
@@ -65,13 +65,13 @@ router.put('/:id', async (req, res) => {
     }
     res.json(result.rows[0]);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Error updating recipe:', err);
+    next(err);
   }
 });
 
 // DELETE /api/recipes/:id
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
     const result = await db.query('DELETE FROM recipes WHERE id = $1 RETURNING *', [id]);
@@ -80,9 +80,25 @@ router.delete('/:id', async (req, res) => {
     }
     res.json({ message: 'Recipe deleted successfully' });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Error deleting recipe:', err);
+    next(err);
   }
 });
+
+router.post('/', async (req, res, next) => {
+    const { title, content, user_id } = req.body;
+    console.log("Received data:", { title, content, user_id });  // Log incoming data
+    try {
+      const result = await db.query(
+        'INSERT INTO recipes (title, content, user_id) VALUES ($1, $2, $3) RETURNING *',
+        [title, content, user_id]
+      );
+      res.status(201).json(result.rows[0]);
+    } catch (err) {
+      console.error('Error creating recipe:', err);
+      next(err);
+    }
+  });
+  
 
 module.exports = router;

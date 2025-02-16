@@ -1,22 +1,31 @@
-import { useEffect, useState } from "react";
+// frontend/src/pages/Recipe.jsx
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import { getRecipeById } from "../api";
 
 export default function Recipe() {
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/recipes/${id}`)
-      .then((response) => setRecipe(response.data))
-      .catch((error) => console.error("Error fetching recipe:", error));
+    async function fetchRecipe() {
+      try {
+        const data = await getRecipeById(id);
+        setRecipe(data);
+      } catch (error) {
+        console.error("Error fetching recipe:", error);
+      }
+    }
+    fetchRecipe();
   }, [id]);
 
-  if (!recipe) return <p>Loading...</p>;
+  if (!recipe) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
-      <h1>{recipe.title}</h1>
+      <h2>{recipe.title}</h2>
       <p>{recipe.content}</p>
     </div>
   );

@@ -7,6 +7,8 @@ print_tree() {
     for entry in "$dir"/*; do
         [[ -e "$entry" ]] || continue  # Skip non-existent files
         [[ "$(basename "$entry")" == "node_modules" ]] && continue  # Exclude node_modules
+        [[ "$(basename "$entry")" == ".pytest_cache" ]] && continue  # Exclude .pytest_cache
+        [[ "$(basename "$entry")" == "venv" ]] && continue  # Exclude venv
 
         local name="${entry##*/}"  # Extract file/folder name
         echo "${prefix}├── $name"

@@ -1,24 +1,58 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import axios from "axios";
+// frontend/src/pages/User.jsx
+import React, { useState } from "react";
+import { registerUser, loginUser } from "../api";
 
 export default function User() {
-  const { id } = useParams();
-  const [user, setUser] = useState(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    axios.get(`http://localhost:5000/users/${id}`)
-      .then((response) => setUser(response.data))
-      .catch((error) => console.error("Error fetching user:", error));
-  }, [id]);
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    try {
+      const data = await registerUser(email, password);
+      setMessage(`Registered successfully! User ID: ${data.id}`);
+    } catch (error) {
+      setMessage(error.message);
+    }
+  };
 
-  if (!user) return <p>Loading...</p>;
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const data = await loginUser(email, password);
+      setMessage(`Logged in! Token: ${data.token}`);
+    } catch (error) {
+      setMessage(error.message);
+    }
+  };
 
   return (
     <div>
-      <h1>User Profile</h1>
-      <p><strong>Email:</strong> {user.email}</p>
-      <p><strong>Bookmarks:</strong> {JSON.stringify(user.bookmarks)}</p>
+      <h2>User Registration & Login</h2>
+      <form onSubmit={handleRegister}>
+        <div>
+          <label>Email:</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Password:</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit">Register</button>
+      </form>
+      <button onClick={handleLogin}>Login</button>
+      {message && <p>{message}</p>}
     </div>
   );
 }
