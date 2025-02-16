@@ -1,24 +1,28 @@
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const prisma = require("./prismaClient");
+// backend/index.js
+require('dotenv').config(); // Load .env variables early
 
+const express = require('express');
 const app = express();
-app.use(cors());
+
+const recipeRoutes = require('./routes/recipeRoutes');
+const userRoutes = require('./routes/userRoutes');
+
+// Middleware: parse JSON requests
 app.use(express.json());
 
-// Basic route
-app.get("/", (req, res) => {
-    res.send("Whiskr API is running!");
+// (Optional) Enable CORS if your frontend runs on a different origin
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*"); 
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  next();
 });
 
-// Import routes
-const userRoutes = require("./routes/userRoutes");
-const recipeRoutes = require("./routes/recipeRoutes");
-
-app.use("/users", userRoutes);
-app.use("/recipes", recipeRoutes);
+// Mount API routes
+app.use('/api/recipes', recipeRoutes);
+app.use('/api/users', userRoutes);
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
