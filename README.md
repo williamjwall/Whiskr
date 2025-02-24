@@ -32,17 +32,8 @@ Whiskr is a full-stack web application featuring a Node/Express backend and a Re
    DATABASE_URL=postgresql://whiskrdb_user:YOUR_PASSWORD@dpg-xyz.oregon-postgres.render.com/whiskrdb
    PORT=5001
    JWT_SECRET=someStrongSecret
-   ALLOWED_ORIGIN=*
 
-4. **Initialize the Database Schema:**
-
-   After setting up your environment variables and ensuring your database connection works, run the SQL script to initialize the database:
-
-   psql "$DATABASE_URL?sslmode=require" -f reset_schema.sql
-
-   Alternatively, run the script using your preferred database tool.
-
-5. **Run the Backend Server:**
+4. **Run the Backend Server:**
 
    npm start
 
