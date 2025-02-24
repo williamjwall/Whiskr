@@ -1,4 +1,4 @@
-// index.js
+// backend/index.js
 require('dotenv').config(); // Load environment variables early
 
 const express = require('express');
@@ -11,7 +11,7 @@ const app = express();
 // Set up security headers
 app.use(helmet());
 
-// Log HTTP requests (only in non-production if you want to limit logging)
+// Log HTTP requests
 if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 } else {
@@ -37,9 +37,14 @@ app.get('/health', (req, res) => {
 // Import routes
 const userRoutes = require('./routes/userRoutes');
 const recipeRoutes = require('./routes/recipeRoutes');
+const ratingRoutes = require('./routes/ratingRoutes');
+const bookmarkRoutes = require('./routes/bookmarkRoutes');
 
+// Mount routes
 app.use('/api/users', userRoutes);
 app.use('/api/recipes', recipeRoutes);
+app.use('/api/ratings', ratingRoutes);
+app.use('/api/bookmarks', bookmarkRoutes);
 
 // Centralized error handling
 app.use((err, req, res, next) => {
@@ -47,7 +52,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
-// Use the PORT provided by the hosting service, default to 5000
+// Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
