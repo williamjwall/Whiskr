@@ -4,8 +4,7 @@
   "description": "Backend API for Whiskr",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "migrate": "node migrate.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
