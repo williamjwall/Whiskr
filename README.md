@@ -109,7 +109,3 @@ Whiskr is a full-stack web application featuring a Node/Express backend and a Re
 
 - **Deployment:**  
   For production, update environment variables appropriately (e.g., use your deployed backend’s URL in VITE_API_URL).
-
----
-
-This README should help you and your teammates get started with running and developing the Whiskr application. If you have any questions or need further instructions, feel free to ask!
