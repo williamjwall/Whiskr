@@ -1,11 +1,14 @@
 // frontend/src/api.js
 
 // Use the environment variable; fallback to local if not defined.
-// Since your back end runs on port 5001 locally, we use that as our fallback.
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
-/** User Endpoints **/
+// Helper function to retrieve the JWT from localStorage.
+function getAuthToken() {
+  return localStorage.getItem("token");
+}
 
+/** User Endpoints **/
 export async function registerUser(email, password) {
   const response = await fetch(`${API_URL}/api/users/register`, {
     method: "POST",
@@ -31,7 +34,6 @@ export async function loginUser(email, password) {
 }
 
 /** Recipe Endpoints **/
-
 export async function getRecipes(search = "") {
   const url = search
     ? `${API_URL}/api/recipes?search=${encodeURIComponent(search)}`
@@ -51,10 +53,15 @@ export async function getRecipeById(id) {
   return response.json();
 }
 
+// Protected endpoints need the JWT in the Authorization header.
 export async function createRecipe(recipeData) {
+  const token = getAuthToken();
   const response = await fetch(`${API_URL}/api/recipes`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": token ? `Bearer ${token}` : "",
+    },
     body: JSON.stringify(recipeData),
   });
   if (!response.ok) {
@@ -64,9 +71,13 @@ export async function createRecipe(recipeData) {
 }
 
 export async function updateRecipe(id, recipeData) {
+  const token = getAuthToken();
   const response = await fetch(`${API_URL}/api/recipes/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": token ? `Bearer ${token}` : "",
+    },
     body: JSON.stringify(recipeData),
   });
   if (!response.ok) {
@@ -76,14 +87,19 @@ export async function updateRecipe(id, recipeData) {
 }
 
 export async function deleteRecipe(id) {
+  const token = getAuthToken();
   const response = await fetch(`${API_URL}/api/recipes/${id}`, {
     method: "DELETE",
+    headers: {
+      "Authorization": token ? `Bearer ${token}` : "",
+    },
   });
   if (!response.ok) {
     throw new Error(`Deleting recipe failed: ${response.statusText}`);
   }
   return response.json();
 }
+
 
 /** Rating Endpoints **/
 

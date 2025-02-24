@@ -21,7 +21,13 @@ export default function User() {
     e.preventDefault();
     try {
       const data = await loginUser(email, password);
-      setMessage(`Logged in! Token: ${data.token}`);
+      // Store the JWT token in localStorage for future authenticated requests.
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        setMessage("Logged in successfully!");
+      } else {
+        setMessage("Login failed: No token received.");
+      }
     } catch (error) {
       setMessage(error.message);
     }

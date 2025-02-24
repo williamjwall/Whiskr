@@ -1,3 +1,4 @@
+// frontend/src/pages/Home.jsx
 import React, { useEffect, useState } from "react";
 import { getRecipes, createRecipe } from "../api";
 
@@ -8,10 +9,9 @@ export default function Home() {
   const [newContent, setNewContent] = useState("");
   const [message, setMessage] = useState("");
 
-  // Simulated logged-in user; in a real app, obtain this from your auth flow.
-  const [currentUser, setCurrentUser] = useState({ id: "37eda056-80ce-4662-8b96-053e6bb9f1a4" });
+  // Check if a token exists; if so, the user is logged in.
+  const token = localStorage.getItem("token");
 
-  // Fetch recipes when the component mounts or when the search term changes
   useEffect(() => {
     async function fetchRecipes() {
       try {
@@ -24,25 +24,24 @@ export default function Home() {
     fetchRecipes();
   }, [search]);
 
-  // Handle the upload of a new recipe
   const handleRecipeUpload = async (e) => {
     e.preventDefault();
-    if (!currentUser) {
+    if (!token) {
       setMessage("Please log in to upload recipes.");
       return;
     }
     try {
+      // Do not include user_id; backend uses the token to determine the user.
       const recipeData = {
         title: newTitle,
         content: newContent,
-        user_id: currentUser.id,
       };
       const data = await createRecipe(recipeData);
       setMessage(`Recipe uploaded: ${data.title}`);
-      // Optionally refresh the recipes list after upload:
+      // Optionally, refresh the recipes list after upload.
       const updatedRecipes = await getRecipes(search);
       setRecipes(updatedRecipes);
-      // Clear the form fields
+      // Clear the form fields.
       setNewTitle("");
       setNewContent("");
     } catch (error) {
@@ -53,14 +52,12 @@ export default function Home() {
   return (
     <div>
       <h2>Recipes</h2>
-      {/* Search Box */}
       <input
         type="text"
         placeholder="Search recipes..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
-      {/* List Recipes */}
       <ul>
         {recipes.map((recipe) => (
           <li key={recipe.id}>
@@ -70,7 +67,7 @@ export default function Home() {
       </ul>
 
       <h2>Upload a New Recipe</h2>
-      {currentUser ? (
+      {token ? (
         <form onSubmit={handleRecipeUpload}>
           <div>
             <label>Title:</label>
