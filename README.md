@@ -4,7 +4,6 @@ Whiskr is a full-stack web application featuring a Node/Express backend and a Re
 
 ## Table of Contents
 
-- [Project Structure](#project-structure)
 - [Setup Instructions](#setup-instructions)
   - [Backend Setup](#backend-setup)
   - [Frontend Setup](#frontend-setup)
@@ -13,60 +12,6 @@ Whiskr is a full-stack web application featuring a Node/Express backend and a Re
 - [Running the Application](#running-the-application)
 - [Testing](#testing)
 - [Additional Notes](#additional-notes)
-
-## Project Structure
-
-Below is the project folder structure:
-
-.
-├── backend
-│   ├── db.js
-│   ├── index.js
-│   ├── middleware
-│   │   └── auth.js
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── reset_schema.sql
-│   ├── routes
-│   │   ├── bookmarkRoutes.js
-│   │   ├── ratingRoutes.js
-│   │   ├── recipeRoutes.js
-│   │   └── userRoutes.js
-│   └── tests
-│       ├── __init__.py
-│       ├── __pycache__
-│       │   ├── __init__.cpython-312.pyc
-│       │   ├── test_recipes.cpython-312-pytest-8.3.4.pyc
-│       │   └── test_users.cpython-312-pytest-8.3.4.pyc
-│       ├── testConnection.js
-│       ├── test_recipes.py
-│       └── test_users.py
-├── frontend
-│   ├── eslint.config.js
-│   ├── index.html
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── public
-│   │   └── vite.svg
-│   ├── README.md
-│   ├── src
-│   │   ├── api.js
-│   │   ├── App.css
-│   │   ├── App.jsx
-│   │   ├── assets
-│   │   │   └── react.svg
-│   │   ├── index.css
-│   │   ├── main.jsx
-│   │   ├── pages
-│   │   │   ├── Home.jsx
-│   │   │   ├── Recipe.jsx
-│   │   │   └── User.jsx
-│   │   └── styles.css
-│   └── vite.config.js
-├── package.json
-├── package-lock.json
-├── README.md
-└── tree.sh
 
 ## Setup Instructions
 
