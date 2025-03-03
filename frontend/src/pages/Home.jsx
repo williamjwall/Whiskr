@@ -1,97 +1,244 @@
 // frontend/src/pages/Home.jsx
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { getRecipes, createRecipe } from "../api";
 
 export default function Home() {
-  const [recipes, setRecipes] = useState([]);
-  const [search, setSearch] = useState("");
-  const [newTitle, setNewTitle] = useState("");
-  const [newContent, setNewContent] = useState("");
+  const [featuredRecipes, setFeaturedRecipes] = useState([]);
+  const [newRecipe, setNewRecipe] = useState({
+    title: "",
+    description: "",
+    content: "",
+    difficulty: "easy",
+    time_minutes: "30",
+    category: "dinner"
+  });
   const [message, setMessage] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
 
-  // Check if a token exists; if so, the user is logged in.
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    async function fetchRecipes() {
-      try {
-        const data = await getRecipes(search);
-        setRecipes(data);
-      } catch (error) {
-        console.error("Error fetching recipes:", error);
-      }
-    }
-    fetchRecipes();
-  }, [search]);
+    fetchFeaturedRecipes();
+  }, []);
 
-  const handleRecipeUpload = async (e) => {
+  async function fetchFeaturedRecipes() {
+    try {
+      const data = await getRecipes("", { featured: true });
+      setFeaturedRecipes(data);
+    } catch (error) {
+      console.error("Error fetching featured recipes:", error);
+    }
+  }
+
+  const handleRecipeSubmit = async (e) => {
     e.preventDefault();
+    
+    console.log('Recipe data before validation:', {
+      title: newRecipe.title,
+      descriptionType: typeof newRecipe.description,
+      descriptionValue: newRecipe.description,
+      content: newRecipe.content,
+      difficulty: newRecipe.difficulty,
+      time_minutes: newRecipe.time_minutes,
+      category: newRecipe.category
+    });
+
     if (!token) {
-      setMessage("Please log in to upload recipes.");
+      setMessage("Please log in to create recipes.");
       return;
     }
+    
+    // Ensure description is never null or undefined
+    const recipeToSubmit = {
+      ...newRecipe,
+      description: newRecipe.description || ''
+    };
+    
+    // Double-check all required fields
+    if (!recipeToSubmit.title || !recipeToSubmit.description || !recipeToSubmit.content) {
+      console.error('Missing required fields:', recipeToSubmit);
+      setMessage("Please fill in all required fields");
+      return;
+    }
+    
+    console.log('Final recipe data to submit:', {
+      title: recipeToSubmit.title,
+      description: {
+        value: recipeToSubmit.description,
+        type: typeof recipeToSubmit.description,
+        length: recipeToSubmit.description.length
+      },
+      content: recipeToSubmit.content
+    });
+    
     try {
-      // Do not include user_id; backend uses the token to determine the user.
-      const recipeData = {
-        title: newTitle,
-        content: newContent,
-      };
-      const data = await createRecipe(recipeData);
-      setMessage(`Recipe uploaded: ${data.title}`);
-      // Optionally, refresh the recipes list after upload.
-      const updatedRecipes = await getRecipes(search);
-      setRecipes(updatedRecipes);
-      // Clear the form fields.
-      setNewTitle("");
-      setNewContent("");
+      const createdRecipe = await createRecipe(recipeToSubmit);
+      console.log('Recipe created successfully:', createdRecipe);
+      setMessage("Recipe created successfully!");
+      setNewRecipe({
+        title: "",
+        description: "",
+        content: "",
+        difficulty: "easy",
+        time_minutes: "30",
+        category: "dinner"
+      });
+      setIsCreating(false);
+      fetchFeaturedRecipes();
     } catch (error) {
+      console.error('Error creating recipe:', error);
       setMessage(error.message);
     }
   };
 
   return (
-    <div>
-      <h2>Recipes</h2>
-      <input
-        type="text"
-        placeholder="Search recipes..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-      <ul>
-        {recipes.map((recipe) => (
-          <li key={recipe.id}>
-            <a href={`/recipe/${recipe.id}`}>{recipe.title}</a>
-          </li>
-        ))}
-      </ul>
+    <div className="home-page">
+      <section className="hero-section">
+        <h1>Welcome to Whiskr</h1>
+        <p className="hero-text">Discover and share amazing recipes with our community</p>
+        <div className="hero-buttons">
+          <Link to="/explore" className="primary-button">Explore Recipes</Link>
+          {token && (
+            <button 
+              className="secondary-button"
+              onClick={() => setIsCreating(true)}
+            >
+              Create Recipe
+            </button>
+          )}
+        </div>
+      </section>
 
-      <h2>Upload a New Recipe</h2>
-      {token ? (
-        <form onSubmit={handleRecipeUpload}>
-          <div>
-            <label>Title:</label>
-            <input
-              type="text"
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
-              required
-            />
+      {isCreating && (
+        <section className="create-recipe-section">
+          <div className="card">
+            <h2>Create New Recipe</h2>
+            <form onSubmit={handleRecipeSubmit} className="create-recipe-form">
+              <div className="form-group">
+                <label>Title:</label>
+                <input
+                  type="text"
+                  value={newRecipe.title}
+                  onChange={(e) => setNewRecipe({...newRecipe, title: e.target.value})}
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label>Description:</label>
+                <textarea
+                  value={newRecipe.description || ''}
+                  onChange={(e) => {
+                    const value = e.target.value || '';
+                    console.log('Description changed:', { value, type: typeof value, length: value.length });
+                    setNewRecipe({...newRecipe, description: value});
+                  }}
+                  required
+                  rows="3"
+                  placeholder="Brief description of your recipe"
+                  onBlur={() => {
+                    console.log('Description onBlur:', {
+                      value: newRecipe.description,
+                      type: typeof newRecipe.description,
+                      length: (newRecipe.description || '').length
+                    });
+                    if (!newRecipe.description) {
+                      setNewRecipe({...newRecipe, description: ''});
+                    }
+                  }}
+                />
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Category:</label>
+                  <select
+                    value={newRecipe.category}
+                    onChange={(e) => setNewRecipe({...newRecipe, category: e.target.value})}
+                  >
+                    <option value="breakfast">Breakfast</option>
+                    <option value="lunch">Lunch</option>
+                    <option value="dinner">Dinner</option>
+                    <option value="dessert">Dessert</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Difficulty:</label>
+                  <select
+                    value={newRecipe.difficulty}
+                    onChange={(e) => setNewRecipe({...newRecipe, difficulty: e.target.value})}
+                  >
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Time (minutes):</label>
+                  <select
+                    value={newRecipe.time_minutes}
+                    onChange={(e) => setNewRecipe({...newRecipe, time_minutes: e.target.value})}
+                  >
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                    <option value="45">45</option>
+                    <option value="60">60</option>
+                    <option value="90">90</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Instructions:</label>
+                <textarea
+                  value={newRecipe.content}
+                  onChange={(e) => setNewRecipe({...newRecipe, content: e.target.value})}
+                  required
+                  rows="6"
+                  placeholder="Step-by-step instructions for your recipe"
+                />
+              </div>
+
+              <div className="button-group">
+                <button type="submit">Create Recipe</button>
+                <button 
+                  type="button" 
+                  className="secondary-button"
+                  onClick={() => setIsCreating(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
-          <div>
-            <label>Content:</label>
-            <textarea
-              value={newContent}
-              onChange={(e) => setNewContent(e.target.value)}
-              required
-            />
-          </div>
-          <button type="submit">Upload Recipe</button>
-        </form>
-      ) : (
-        <p>Please log in to upload a recipe.</p>
+        </section>
       )}
-      {message && <p>{message}</p>}
+
+      <section className="featured-recipes">
+        <div className="container">
+          <h2>Featured Recipes</h2>
+          
+          {featuredRecipes.length === 0 ? (
+            <p className="no-recipes">No featured recipes available yet.</p>
+          ) : (
+            <div className="featured-recipe-list">
+              {featuredRecipes.map((recipe) => (
+                <div key={recipe.id} className="featured-recipe-item">
+                  <h3>{recipe.title}</h3>
+                  <Link to={`/recipe/${recipe.id}`} className="view-recipe-link">
+                    View Recipe →
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {message && <div className="message">{message}</div>}
     </div>
   );
 }
