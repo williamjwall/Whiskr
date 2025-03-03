@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const { authenticateToken } = require('../middleware/authMiddleware');
 
 // POST /api/bookmarks
 router.post('/', async (req, res, next) => {
@@ -36,20 +37,36 @@ router.delete('/', async (req, res, next) => {
 });
 
 // GET /api/bookmarks/user/:userId
-router.get('/user/:userId', async (req, res, next) => {
-  const { userId } = req.params;
+router.get('/user/:userId', authenticateToken, async (req, res) => {
   try {
-    // Join bookmarks with recipes for additional recipe details
+    const { userId } = req.params;
+    const authenticatedUserId = req.user.id;
+    
+    if (!userId || userId === 'undefined') {
+      return res.status(400).json({ error: 'Valid user ID is required' });
+    }
+    
+    if (userId !== authenticatedUserId) {
+      console.log('User ID mismatch:', { requestedId: userId, authenticatedId: authenticatedUserId });
+      return res.status(403).json({ error: 'Unauthorized access to bookmarks' });
+    }
+    
+    console.log('Fetching bookmarks for user:', userId);
+    
     const result = await db.query(
-      `SELECT b.*, r.title, r.content 
-       FROM bookmarks b 
-       JOIN recipes r ON b.recipe_id = r.id 
-       WHERE b.user_id = $1`,
+      `SELECT r.*, b.created_at as bookmarked_at
+       FROM bookmarks b
+       JOIN recipes r ON b.recipe_id = r.id
+       WHERE b.user_id = $1
+       ORDER BY b.created_at DESC`,
       [userId]
     );
+    
+    console.log(`Found ${result.rows.length} bookmarks for user ${userId}`);
     res.json(result.rows);
   } catch (err) {
-    next(err);
+    console.error('Error fetching bookmarks:', err);
+    res.status(500).json({ error: 'Failed to fetch bookmarks' });
   }
 });
 
