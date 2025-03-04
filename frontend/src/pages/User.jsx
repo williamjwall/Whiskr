@@ -313,7 +313,7 @@ export default function User() {
           <div className="recipe-grid">
             {bookmarks.length > 0 ? (
               bookmarks.map((bookmark) => (
-                <div key={bookmark.recipe_id} className="recipe-card">
+                <div key={bookmark.id} className="recipe-card">
                   {bookmark.image_url && (
                     <div className="recipe-image">
                       <img src={bookmark.image_url} alt={bookmark.title} />
@@ -328,7 +328,7 @@ export default function User() {
                       <span className="time">{bookmark.time_minutes} mins</span>
                     </div>
                     <p>{bookmark.description}</p>
-                    <Link to={`/recipe/${bookmark.recipe_id}`} className="view-recipe-link">
+                    <Link to={`/recipe/${bookmark.id}`} className="view-recipe-link">
                       View Recipe →
                     </Link>
                   </div>
