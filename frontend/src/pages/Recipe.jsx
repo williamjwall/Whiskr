@@ -21,14 +21,23 @@ export default function Recipe() {
         setLoading(true);
         const data = await getRecipeById(id);
         setRecipe(data);
-        
         if (authenticated) {
           try {
             const bookmarks = await getBookmarksByUser(userId);
-            const isBookmarked = bookmarks.some(bookmark => 
-              bookmark.recipe_id === id
-            );
-            setIsBookmarked(isBookmarked);
+            /*console.log(userId);
+            console.log(data.id);
+            console.log(bookmarks); */
+            let i = 0;
+            for (i; i < bookmarks.length; i++)  {
+              if (bookmarks[i].id === data.id)  {
+                console.log("good");
+                setIsBookmarked(true);
+                break;
+              }
+            }
+            /*const isBookmarked = bookmarks.some(bookmark.id ===
+              data.id
+            );*/
           } catch (err) {
             console.error("Error checking bookmark status:", err);
           }
