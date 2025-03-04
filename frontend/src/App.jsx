@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import Recipe from "./pages/Recipe";
 import User from "./pages/User";
 import Search from "./pages/Search";
+import About from "./pages/About";  // Import the About page
 
 export default function App() {
   const currentYear = new Date().getFullYear();
@@ -19,6 +20,7 @@ export default function App() {
                 <Link to="/">Home</Link>
                 <Link to="/explore">Explore</Link>
                 <Link to="/user/1">Profile</Link>
+                <Link to="/about">About</Link> {/* Add About link in the navbar */}
               </div>
             </div>
           </nav>
@@ -32,6 +34,7 @@ export default function App() {
               <Route path="/explore" element={<Search />} />
               <Route path="/recipe/:id" element={<Recipe />} />
               <Route path="/user/:id" element={<User />} />
+              <Route path="/about" element={<About />} /> {/* Add About route */}
             </Routes>
           </div>
         </main>
