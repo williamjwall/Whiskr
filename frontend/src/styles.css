@@ -553,13 +553,18 @@ button.secondary {
 }
 
 .recipe-card h3 {
-  margin: 0;
+  margin: var(--spacing-sm);
   color: var(--text-color);
 }
 
 .recipe-card p {
   color: var(--text-light);
-  margin: var(--spacing-sm) 0;
+  margin: var(--spacing-sm);
+  line-height: 1.5;
+}
+
+.recipe-card a {
+  margin: var(--spacing-sm);
   line-height: 1.5;
 }
 
@@ -729,7 +734,7 @@ button.secondary {
 
 .recipe-meta {
   display: flex;
-  gap: var(--spacing-md);
+  gap: var(--spacing-sm);
   flex-wrap: wrap;
 }
 
@@ -738,6 +743,7 @@ button.secondary {
   border-radius: 50px;
   font-size: 0.85rem;
   font-weight: 500;
+  margin-left: var(--spacing-sm);
 }
 
 .difficulty {
