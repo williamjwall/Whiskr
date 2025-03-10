@@ -85,8 +85,10 @@ export default function Search() {
             <div className="recipe-content">
               <h3>{recipe.title}</h3>
               <div className="recipe-meta">
-                <span>{recipe.difficulty}</span>
-                <span>{recipe.time} mins</span>
+                <span className={`difficulty ${recipe.difficulty}`}>
+                    {recipe.difficulty}
+                </span>
+                <span className="time">{recipe.time_minutes} mins</span>
               </div>
               <p>{recipe.description}</p>
               <a href={`/recipe/${recipe.id}`} className="view-recipe-link">
