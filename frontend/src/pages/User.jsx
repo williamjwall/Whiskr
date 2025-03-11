@@ -300,12 +300,12 @@ export default function User() {
                       <span className="time">{recipe.time_minutes} mins</span>
                     </div>
                     <p>{recipe.description}</p>
-                    <div> 
+                    <div /*style ={{alignItems: "center"}}*/>
+                      <p>
+                      <Link to={`/recipe/${recipe.id}`} className="view-recipe-link">View Recipe →</Link>
                       <button onClick={ () => {deleteRecipe(recipe.id); localStorage.setItem('currentTab', "recipes"); location.reload();}}>Delete Recipe</button>
+                      </p>
                     </div>
-                    <Link to={`/recipe/${recipe.id}`} className="view-recipe-link">
-                      View Recipe →
-                    </Link>
                   </div>
                 </div>
               ))
