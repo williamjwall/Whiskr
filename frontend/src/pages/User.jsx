@@ -1,7 +1,7 @@
 // frontend/src/pages/User.jsx
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { registerUser, loginUser, getBookmarksByUser, getRecipesByUser } from "../api";
+import { registerUser, loginUser, getBookmarksByUser, getRecipesByUser, deleteRecipe} from "../api";
 import { storeUserAuth, getUserAuth, clearUserAuth, isAuthenticated } from "../utils/auth";
 
 export default function User() {
@@ -12,6 +12,11 @@ export default function User() {
   const [bookmarks, setBookmarks] = useState([]);
   const [userRecipes, setUserRecipes] = useState([]);
 
+  /*console.log(localStorage.getItem('currentTab'));
+  if (localStorage.getItem('currentTab') != null)  {
+    setActiveTab(localStorage.getItem('currentTab'));
+  }*/
+  
   // Check if user is logged in
   const { token, userId, email: userEmail } = getUserAuth();
   const authenticated = isAuthenticated();
@@ -27,6 +32,9 @@ export default function User() {
 
   useEffect(() => {
     if (authenticated) {
+      if (localStorage.getItem('currentTab') != null)  {
+        setActiveTab(localStorage.getItem('currentTab'));
+      }
       if (activeTab === "bookmarks") {
         fetchBookmarks();
       } else if (activeTab === "recipes") {
@@ -157,13 +165,13 @@ export default function User() {
           <div className="auth-tabs">
             <button 
               className={activeTab === "login" ? "active" : ""} 
-              onClick={() => setActiveTab("login")}
+              onClick={() => {setActiveTab("login"); localStorage.setItem('currentTab', 'login');}}
             >
               Login
             </button>
             <button 
               className={activeTab === "register" ? "active" : ""} 
-              onClick={() => setActiveTab("register")}
+              onClick={() => {setActiveTab("register"); localStorage.setItem('currentTab', 'register');}}
             >
               Register
             </button>
@@ -231,19 +239,19 @@ export default function User() {
       <div className="profile-tabs">
         <button 
           className={`tab-button ${activeTab === "profile" ? "active" : ""}`}
-          onClick={() => setActiveTab("profile")}
+          onClick={() => {setActiveTab("profile"); localStorage.setItem('currentTab', 'profile');}}
         >
           Profile
         </button>
         <button 
           className={`tab-button ${activeTab === "recipes" ? "active" : ""}`}
-          onClick={() => setActiveTab("recipes")}
+          onClick={() => {setActiveTab("recipes"); localStorage.setItem('currentTab', 'recipes');}}
         >
           My Recipes
         </button>
         <button 
           className={`tab-button ${activeTab === "bookmarks" ? "active" : ""}`}
-          onClick={() => setActiveTab("bookmarks")}
+          onClick={() => {setActiveTab("bookmarks"); localStorage.setItem('currentTab', 'bookmarks');}}
         >
           Bookmarks
         </button>
@@ -292,6 +300,9 @@ export default function User() {
                       <span className="time">{recipe.time_minutes} mins</span>
                     </div>
                     <p>{recipe.description}</p>
+                    <div> 
+                      <button onClick={ () => {deleteRecipe(recipe.id); localStorage.setItem('currentTab', "recipes"); location.reload();}}>Delete Recipe</button>
+                    </div>
                     <Link to={`/recipe/${recipe.id}`} className="view-recipe-link">
                       View Recipe →
                     </Link>
