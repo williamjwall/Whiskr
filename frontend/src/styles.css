@@ -495,6 +495,7 @@ button.secondary {
   box-shadow: var(--shadow-sm);
   overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
 }
 
 .recipe-card:hover {
@@ -553,14 +554,22 @@ button.secondary {
 }
 
 .recipe-card h3 {
-  margin: 0;
+  margin: var(--spacing-sm);
   color: var(--text-color);
 }
 
 .recipe-card p {
   color: var(--text-light);
-  margin: var(--spacing-sm) 0;
+  margin: var(--spacing-sm);
   line-height: 1.5;
+  margin-bottom: 4.5rem;
+}
+
+.recipe-card a {
+  margin: var(--spacing-sm);
+  line-height: 1.5;
+  position: absolute;
+  bottom: var(--spacing-sm);
 }
 
 /* Hero Section */
@@ -729,7 +738,7 @@ button.secondary {
 
 .recipe-meta {
   display: flex;
-  gap: var(--spacing-md);
+  gap: var(--spacing-sm);
   flex-wrap: wrap;
 }
 
@@ -738,6 +747,7 @@ button.secondary {
   border-radius: 50px;
   font-size: 0.85rem;
   font-weight: 500;
+  margin-left: var(--spacing-sm);
 }
 
 .difficulty {
@@ -795,7 +805,7 @@ button.secondary {
 
 .recipe-content {
   display: grid;
-  gap: var(--spacing-xl);
+  gap: var(--spacing-lg);
 }
 
 .recipe-description, .recipe-ingredients, .recipe-instructions {
