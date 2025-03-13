@@ -7,7 +7,7 @@ export default function Bookmarks() {
   const [message, setMessage] = useState("");
 
   // Retrieve the user ID from the token or user context
-  const userId = localStorage.getItem("userId"); // Adjust based on your auth setup
+  const userId = localStorage.getItem("userId"); 
 
   useEffect(() => {
     async function fetchBookmarks() {
