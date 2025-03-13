@@ -132,7 +132,7 @@ input:focus, textarea:focus {
 
 /* Buttons */
 button {
-  background: var(--primary-gradient);
+  /*background: var(--primary-gradient);*/
   color: white;
   padding: var(--spacing-sm) var(--spacing-lg);
   border: none;
@@ -1056,4 +1056,9 @@ button.secondary {
   color: var(--text-light);
   font-size: 1rem;
   margin-bottom: var(--spacing-md);
+}
+
+/*Ratings*/
+.ratings p {
+	margin-block-end: 0em;
 }
